@@ -23,6 +23,7 @@ export type TrainingData = {
     date: string,
     duration: number,
     activity: string,
+    customerName?: string,
     _links: {
         self: {
             href: string

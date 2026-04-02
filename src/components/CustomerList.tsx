@@ -10,13 +10,13 @@ function CustomerList() {
     const [customers, setCustomers] = useState<CustomerData[]>([]);
 
     const columns: GridColDef[] = [
-        { field: "firstname", headerName: "First Name" },
-        { field: "lastname", headerName: "Last Name" },
-        { field: "email", headerName: "Email", width:150 },
+        { field: "firstname", headerName: "First Name", width:150 },
+        { field: "lastname", headerName: "Last Name", width:150 },
+        { field: "email", headerName: "Email", width:200 },
         { field: "phone", headerName: "Phone", width:120 },
-        { field: "streetaddress", headerName: "Address",width:150 },
-        { field: "postcode", headerName: "Postcode" },
-        { field: "city", headerName: "City" }
+        { field: "streetaddress", headerName: "Address",width:200 },
+        { field: "postcode", headerName: "Postcode", width:100 },
+        { field: "city", headerName: "City", width:100 }
     ]
 
     const getCustomers = () => {
@@ -36,7 +36,7 @@ function CustomerList() {
 
     return (
         <>
-            <div style={{ width: "90%", height: 500 }}>
+            <div style={{ width: "100%", height: 500 }}>
                 <DataGrid
                     columns={columns}
                     rows={customers}

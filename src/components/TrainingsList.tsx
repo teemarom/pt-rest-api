@@ -11,18 +11,19 @@ function TrainingsList() {
     const [trainings, setTrainings] = useState<TrainingData[]>([]);
 
     const columns: GridColDef[] = [
+        { field: "customerName", headerName: "Customer", width:250},
         {
             field: "date",
             headerName: "Date",
-            width: 300,
+            width: 250,
             renderCell: (params: GridRenderCellParams) => {
                 const value = params.row.date;
 
                 return dayjs(value).format("DD.MM.YYYY HH:mm");
             }
         },
-        { field: "duration", headerName: "Duration", width: 200 },
-        { field: "activity", headerName: "Activity", width: 200 },
+        { field: "duration", headerName: "Duration", width: 250 },
+        { field: "activity", headerName: "Activity", width: 250 },
     ]
 
 
@@ -33,7 +34,27 @@ function TrainingsList() {
                     throw new Error("Error when fetching trainings..")
                 return response.json();
             })
-            .then(data => setTrainings(data._embedded.trainings))
+            .then(data => {
+                const trainingsArray = data._embedded.trainings;
+
+                // tallennus taulukkoon ilman customer nimeä
+                setTrainings(trainingsArray);
+
+                // customer nimen haku foreach
+                trainingsArray.forEach((data: TrainingData, i: number) => {
+                    fetch(data._links.customer.href) // hakee asiakkaan etu- ja sukunimen
+                    .then(response => {
+                        if (!response.ok)
+                            throw new Error("Error when fetching names..")
+                        return response.json();
+                    })
+                    .then(customer => { // tallentaa nimen listaan
+                        data.customerName = customer.firstname + " " + customer.lastname;
+                        setTrainings([...trainingsArray]);
+                    })
+                    .catch(err => console.log(err))
+                })
+            })
             .catch(err => console.log(err));
     }
 
@@ -43,7 +64,7 @@ function TrainingsList() {
 
     return (
         <>
-            <div style={{ width: "90%", height: 500 }}>
+            <div style={{ width: "100%", height: 500 }}>
                 <DataGrid
                     columns={columns}
                     rows={trainings}
