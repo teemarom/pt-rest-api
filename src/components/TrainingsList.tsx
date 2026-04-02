@@ -3,19 +3,26 @@ import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 
+import dayjs from "dayjs";
+
 
 function TrainingsList() {
 
     const [trainings, setTrainings] = useState<TrainingData[]>([]);
 
-    const columns: GridColDef<TrainingData>[] = [
+    const columns: GridColDef[] = [
         {
             field: "date",
             headerName: "Date",
             width: 300,
+            renderCell: (params: GridRenderCellParams) => {
+                const value = params.row.date;
+
+                return dayjs(value).format("DD.MM.YYYY HH:mm");
+            }
         },
         { field: "duration", headerName: "Duration", width: 200 },
-        { field: "activity", headerName: "Activity", width: 300 },
+        { field: "activity", headerName: "Activity", width: 200 },
     ]
 
 
