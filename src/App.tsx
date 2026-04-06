@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import CustomerList from './components/CustomerList';
 import TrainingsList from './components/TrainingsList';
+import { Link, Outlet } from 'react-router';
 
 function App() {
   
@@ -19,8 +20,12 @@ function App() {
           </Toolbar>
         </AppBar>
 
-        <CustomerList />
-        <TrainingsList />
+        <nav>
+          <Link to={"/"}>Home </Link><br/>
+          <Link to={"/customerlist"}>Customer List </Link><br/>
+          <Link to={"/trainingslist"}>Trainings List </Link>
+        </nav>
+        <Outlet />
 
         <CssBaseline />
       </Container>
