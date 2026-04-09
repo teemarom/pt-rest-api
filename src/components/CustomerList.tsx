@@ -1,13 +1,16 @@
-import type { CustomerData } from "../Types";
+import type { Customer, CustomerData } from "../Types";
 import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
+import { Button, Stack } from "@mui/material";
+
 
 
 
 function CustomerList() {
 
     const [customers, setCustomers] = useState<CustomerData[]>([]);
+    const [open, setOpen] = useState(false);
 
     const columns: GridColDef[] = [
         { field: "firstname", headerName: "First Name", width:150 },
@@ -16,7 +19,27 @@ function CustomerList() {
         { field: "phone", headerName: "Phone", width:120 },
         { field: "streetaddress", headerName: "Address",width:200 },
         { field: "postcode", headerName: "Postcode", width:100 },
-        { field: "city", headerName: "City", width:100 }
+        { field: "city", headerName: "City", width:100 },
+        {
+            field: "_links.customer.href",
+            headerName: "",
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            renderCell: (params: GridRenderCellParams) =>
+                <EditCustomer customer={params.row} handleUpdate={handleUpdate} />
+        },
+        {
+            field: "_links.self.href",
+            headerName: "",
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            renderCell: (params: GridRenderCellParams) =>
+                <Button color="error" size="small" onClick={() => handleDelete(params.id as string)}>
+                    Delete
+                </Button>
+        }
     ]
 
     const getCustomers = () => {
@@ -30,12 +53,72 @@ function CustomerList() {
             .catch(err => console.log(err));
     }
 
+    const handleDelete =(url: string) => {
+        if (window.confirm("Delete Customer?")) {
+            fetch(url, {
+                method: "DELETE"
+            })
+                .then(response => {
+                    if (!response.ok)
+                        throw new Error("Error when deleting a customer");
+                    return response.json();
+                })
+                .then(() => {
+                    getCustomers();
+                    setOpen(true);
+                })
+                .catch(err => console.error(err))
+        }
+    }
+
+    const saveCustomer = (customer: Customer) => {
+        return fetch(import.meta.env.VITE_API_URL + "/customers", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(customer)
+        })
+            .then(response => {
+                if (!response.ok)
+                    throw new Error("Error when adding a new customer");
+                return response.json();
+            })
+    }
+
+    const handleAdd = (customer: Customer) => {
+        saveCustomer(customer)
+            .then(() => getCustomers())
+            .catch(err => console.log(err))
+    }
+
+    const handleUpdate = (url: string, updatedCustomer: Customer) => {
+        fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedCustomer)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error when editing a car");
+                }
+                return response.json();
+            })
+            .then(() => getCustomers())
+            .catch(err => console.error(err))
+    }
+
     useEffect(() => {
         getCustomers();
     }, []);
 
     return (
         <>
+            <Stack sx={{mt:2, mb:2}} direction="row" margin="auto">
+                <AddCustomer handleAdd={handleAdd} />
+            </Stack>
             <div style={{ width: "100%", height: 500 }}>
                 <DataGrid
                     columns={columns}
@@ -49,5 +132,7 @@ function CustomerList() {
     )
 
 }
+import AddCustomer from "./AddCustomer";
+import EditCustomer from "./EditCustomer";
 
 export default CustomerList;

@@ -64,7 +64,7 @@ function TrainingsList() {
 
     return (
         <>
-            <div style={{ width: "100%", height: 500 }}>
+            <div style={{ width: "80%", height: 500}}>
                 <DataGrid
                     columns={columns}
                     rows={trainings}

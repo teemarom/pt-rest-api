@@ -19,6 +19,8 @@ export type CustomerData = {
     }
 }
 
+export type Customer = Omit<CustomerData, "_links">
+
 export type TrainingData = {
     date: string,
     duration: number,
@@ -36,3 +38,5 @@ export type TrainingData = {
         }
     }
 }
+
+export type Training = Omit<TrainingData, "_links">
