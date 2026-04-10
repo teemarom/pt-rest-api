@@ -42,9 +42,7 @@ export default function AddCustomer(props: AddCustomerProps) {
                 <CustomerForm customer={customer} setCustomer={setCustomer} />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>
-                        Save
-                    </Button>
+                    <Button onClick={handleSubmit}>Save</Button>
                 </DialogActions>
             </Dialog>
         </>

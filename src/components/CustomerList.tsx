@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, Stack } from "@mui/material";
+import AddCustomer from "./AddCustomer";
+import EditCustomer from "./EditCustomer";
+import Snackbar from '@mui/material/Snackbar';
 
 
 
@@ -15,8 +18,8 @@ function CustomerList() {
     const columns: GridColDef[] = [
         { field: "firstname", headerName: "First Name", width:150 },
         { field: "lastname", headerName: "Last Name", width:150 },
-        { field: "email", headerName: "Email", width:200 },
-        { field: "phone", headerName: "Phone", width:120 },
+        { field: "email", headerName: "Email", width:250 },
+        { field: "phone", headerName: "Phone", width:150 },
         { field: "streetaddress", headerName: "Address",width:200 },
         { field: "postcode", headerName: "Postcode", width:100 },
         { field: "city", headerName: "City", width:100 },
@@ -128,11 +131,17 @@ function CustomerList() {
                     rowSelection={false}
                 />
             </div>
+            <Snackbar 
+                open={open}
+                autoHideDuration={4000}
+                onClose={() => setOpen(false)}
+                message="Customer Deleted"
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            />
         </>
     )
 
 }
-import AddCustomer from "./AddCustomer";
-import EditCustomer from "./EditCustomer";
+
 
 export default CustomerList;
