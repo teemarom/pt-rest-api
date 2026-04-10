@@ -19,9 +19,11 @@ export default function TrainingForm({training, setTraining}: TrainingFormType) 
                 variant="standard"
             />
              <TextField
+                type="datetime-local"
                 required
                 margin="dense"
-                label="Date (dd.mm.yyyy hh:mm)"
+                label="Date"
+                InputLabelProps={{ shrink: true }}
                 value={training.date}
                 onChange={e => setTraining({...training, date: e.target.value})}
                 fullWidth

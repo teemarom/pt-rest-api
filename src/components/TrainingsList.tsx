@@ -1,4 +1,4 @@
-import type { Training, TrainingData } from "../Types";
+import type { Training, TrainingData, TrainingPost } from "../Types";
 import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
@@ -61,6 +61,12 @@ function TrainingsList() {
     }
 
     const saveTraining = (training: Training) => {
+        const trainingData: TrainingPost = {
+            date: new Date(training.date).toISOString(),
+            duration: training.duration,
+            activity: training.activity,
+            customer: training.customer
+        };
         return fetch(import.meta.env.VITE_API_URL + "/trainings", {
             method: "POST",
             headers: {

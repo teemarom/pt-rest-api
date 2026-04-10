@@ -40,3 +40,10 @@ export type TrainingData = {
 }
 
 export type Training = Omit<TrainingData, "_links">
+
+export type TrainingPost = {
+    date:string;
+    duration: number;
+    activity: string;
+    customer: string;
+}
