@@ -1,4 +1,4 @@
-import type { Training, TrainingData, TrainingPost } from "../Types";
+import type { CustomerData, Training, TrainingData, TrainingPost } from "../Types";
 import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
@@ -11,9 +11,10 @@ import AddTraining from "./AddTraining";
 function TrainingsList() {
 
     const [trainings, setTrainings] = useState<TrainingData[]>([]);
+    const [customers, setCustomers] = useState<CustomerData[]>([]);
 
     const columns: GridColDef[] = [
-        { field: "customerName", headerName: "Customer", width: 250 },
+        { field: "customer", headerName: "Customer", width: 250 },
         {
             field: "date",
             headerName: "Date",
@@ -28,6 +29,13 @@ function TrainingsList() {
         { field: "activity", headerName: "Activity", width: 250 },
     ]
 
+    
+    const getCustomers = () => {
+    fetch(import.meta.env.VITE_API_URL + "/customers")
+        .then(res => res.json())
+        .then(data => setCustomers(data._embedded.customers))
+        .catch(err => console.log(err));
+};
 
     const getTrainings = () => {
         fetch(import.meta.env.VITE_API_URL + "/trainings")
@@ -51,7 +59,7 @@ function TrainingsList() {
                             return response.json();
                         })
                         .then(customer => { // tallentaa nimen listaan
-                            data.customerName = customer.firstname + " " + customer.lastname;
+                            data.customer = customer.firstname + " " + customer.lastname;
                             setTrainings([...trainingsArray]);
                         })
                         .catch(err => console.log(err))
@@ -72,7 +80,7 @@ function TrainingsList() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body:JSON.stringify(training)
+            body:JSON.stringify(trainingData)
         })
             .then(response => {
                 if (!response.ok) {
@@ -91,12 +99,13 @@ function TrainingsList() {
 
     useEffect(() => {
         getTrainings();
+        getCustomers();
     }, []);
 
     return (
         <>
             <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
-                <AddTraining handleAdd={handleAdd} />
+                <AddTraining handleAdd={handleAdd} customers={customers} />
             </Stack>
             <div style={{ width: "80%", height: 500 }}>
                 <DataGrid

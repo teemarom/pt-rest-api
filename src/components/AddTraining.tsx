@@ -1,19 +1,20 @@
 import { useState } from "react";
-import type { Training } from "../Types";
+import type { CustomerData, Training } from "../Types";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import TrainingForm from "./TrainingForm";
 
 type AddTrainingProps = {
     handleAdd: (training: Training) => void;
+    customers: CustomerData[];
 }
 
-export default function AddTraining(props: AddTrainingProps) {
+export default function AddTraining({ handleAdd, customers }: AddTrainingProps) {
     const [open, setOpen] = useState(false);
     const [training, setTraining] = useState<Training>({
         date: "",
         duration: 0,
         activity: "",
-        customerName: "",
+        customer: "",
     })
 
     const handleClickOpen = () => {
@@ -25,7 +26,7 @@ export default function AddTraining(props: AddTrainingProps) {
     }
 
     const handleSubmit = () => {
-        props.handleAdd(training);
+        handleAdd(training);
         handleClose();
     }
 
@@ -34,7 +35,7 @@ export default function AddTraining(props: AddTrainingProps) {
             <Button variant="contained" onClick={handleClickOpen}>Add Training</Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>New Training</DialogTitle>
-                <TrainingForm training={training} setTraining={setTraining} />
+                <TrainingForm training={training} setTraining={setTraining} customers={customers}/>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button onClick={handleSubmit}>Save</Button>
