@@ -1,9 +1,11 @@
-import type { TrainingData } from "../Types";
+import type { Training, TrainingData } from "../Types";
 import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 
 import dayjs from "dayjs";
+import { Stack } from "@mui/material";
+import AddTraining from "./AddTraining";
 
 
 function TrainingsList() {
@@ -11,7 +13,7 @@ function TrainingsList() {
     const [trainings, setTrainings] = useState<TrainingData[]>([]);
 
     const columns: GridColDef[] = [
-        { field: "customerName", headerName: "Customer", width:250},
+        { field: "customerName", headerName: "Customer", width: 250 },
         {
             field: "date",
             headerName: "Date",
@@ -43,19 +45,42 @@ function TrainingsList() {
                 // customer nimen haku foreach
                 trainingsArray.forEach((data: TrainingData, i: number) => {
                     fetch(data._links.customer.href) // hakee asiakkaan etu- ja sukunimen
-                    .then(response => {
-                        if (!response.ok)
-                            throw new Error("Error when fetching names..")
-                        return response.json();
-                    })
-                    .then(customer => { // tallentaa nimen listaan
-                        data.customerName = customer.firstname + " " + customer.lastname;
-                        setTrainings([...trainingsArray]);
-                    })
-                    .catch(err => console.log(err))
+                        .then(response => {
+                            if (!response.ok)
+                                throw new Error("Error when fetching names..")
+                            return response.json();
+                        })
+                        .then(customer => { // tallentaa nimen listaan
+                            data.customerName = customer.firstname + " " + customer.lastname;
+                            setTrainings([...trainingsArray]);
+                        })
+                        .catch(err => console.log(err))
                 })
             })
             .catch(err => console.log(err));
+    }
+
+    const saveTraining = (training: Training) => {
+        return fetch(import.meta.env.VITE_API_URL + "/trainings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(training)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.log(training);
+                    throw new Error("Error when adding a new training");
+                }
+                return response.json();
+            })
+    }
+
+    const handleAdd = (training: Training) => {
+        saveTraining(training)
+        .then(() => getTrainings())
+        .catch(err => console.log(err))
     }
 
     useEffect(() => {
@@ -64,7 +89,10 @@ function TrainingsList() {
 
     return (
         <>
-            <div style={{ width: "80%", height: 500}}>
+            <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
+                <AddTraining handleAdd={handleAdd} />
+            </Stack>
+            <div style={{ width: "80%", height: 500 }}>
                 <DataGrid
                     columns={columns}
                     rows={trainings}
