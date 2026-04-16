@@ -4,7 +4,7 @@ import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 
 import dayjs from "dayjs";
-import { Stack } from "@mui/material";
+import { Button, Snackbar, Stack } from "@mui/material";
 import AddTraining from "./AddTraining";
 
 
@@ -12,6 +12,8 @@ function TrainingsList() {
 
     const [trainings, setTrainings] = useState<TrainingData[]>([]);
     const [customers, setCustomers] = useState<CustomerData[]>([]);
+
+    const [open, setOpen] = useState(false);
 
     const columns: GridColDef[] = [
         { field: "customer", headerName: "Customer", width: 250 },
@@ -27,15 +29,26 @@ function TrainingsList() {
         },
         { field: "duration", headerName: "Duration", width: 250 },
         { field: "activity", headerName: "Activity", width: 250 },
+        {
+            field: "_link.self.href",
+            headerName: "",
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            renderCell: (params: GridRenderCellParams) =>
+                <Button color="error" size="small" onClick={() => handleDelete(params.id as string)}>
+                    Delete
+                </Button>
+        }
     ]
 
-    
+
     const getCustomers = () => {
-    fetch(import.meta.env.VITE_API_URL + "/customers")
-        .then(res => res.json())
-        .then(data => setCustomers(data._embedded.customers))
-        .catch(err => console.log(err));
-};
+        fetch(import.meta.env.VITE_API_URL + "/customers")
+            .then(res => res.json())
+            .then(data => setCustomers(data._embedded.customers))
+            .catch(err => console.log(err));
+    };
 
     const getTrainings = () => {
         fetch(import.meta.env.VITE_API_URL + "/trainings")
@@ -68,6 +81,24 @@ function TrainingsList() {
             .catch(err => console.log(err));
     }
 
+    const handleDelete = (url: string) => {
+        if (window.confirm("Delete Training?")) {
+            fetch(url, {
+                method: "DELETE"
+            })
+                .then(response => {
+                    if (!response.ok)
+                        throw new Error("Error when deleting a training");
+                    return response.json();
+                })
+                .then(() => {
+                    getTrainings();
+                    setOpen(true);
+                })
+                .catch(err => console.error(err))
+        }
+    }
+
     const saveTraining = (training: Training) => {
         const trainingData: TrainingPost = {
             date: new Date(training.date).toISOString(),
@@ -80,7 +111,7 @@ function TrainingsList() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body:JSON.stringify(trainingData)
+            body: JSON.stringify(trainingData)
         })
             .then(response => {
                 if (!response.ok) {
@@ -93,8 +124,8 @@ function TrainingsList() {
 
     const handleAdd = (training: Training) => {
         saveTraining(training)
-        .then(() => getTrainings())
-        .catch(err => console.log(err))
+            .then(() => getTrainings())
+            .catch(err => console.log(err))
     }
 
     useEffect(() => {
@@ -116,6 +147,13 @@ function TrainingsList() {
                     rowSelection={false}
                 />
             </div>
+            <Snackbar
+                open={open}
+                autoHideDuration={4000}
+                onClose={() => setOpen(false)}
+                message="Training Deleted"
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            />
         </>
     )
 
