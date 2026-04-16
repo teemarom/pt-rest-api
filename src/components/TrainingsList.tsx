@@ -6,6 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { Button, Snackbar, Stack } from "@mui/material";
 import AddTraining from "./AddTraining";
+import EditTraining from "./EditTraining";
 
 
 function TrainingsList() {
@@ -29,6 +30,16 @@ function TrainingsList() {
         },
         { field: "duration", headerName: "Duration", width: 250 },
         { field: "activity", headerName: "Activity", width: 250 },
+        {
+            field: "_links.customer.href",
+            headerName: "",
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            renderCell: (params: GridRenderCellParams) => (
+                <EditTraining training={params.row as TrainingData} handleUpdate={handleUpdate} customers={customers} />
+            )
+        },
         {
             field: "_link.self.href",
             headerName: "",
@@ -99,6 +110,29 @@ function TrainingsList() {
         }
     }
 
+    const handleUpdate = (url: string, updatedTraining: Training) => {
+        const trainingData: TrainingPost = {
+            date: new Date(updatedTraining.date).toISOString(),
+            duration: updatedTraining.duration,
+            activity: updatedTraining.activity,
+            customer: updatedTraining.customer
+        };
+        fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(trainingData)
+        })
+            .then(response => {
+                if (!response.ok)
+                    throw new Error("Error when updating a training");
+                return response.json();
+            })
+            .then(() => getTrainings())
+            .catch(err => console.error(err))
+    }
+
     const saveTraining = (training: Training) => {
         const trainingData: TrainingPost = {
             date: new Date(training.date).toISOString(),
@@ -138,7 +172,7 @@ function TrainingsList() {
             <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
                 <AddTraining handleAdd={handleAdd} customers={customers} />
             </Stack>
-            <div style={{ width: "80%", height: 500 }}>
+            <div style={{ width: "100%", height: 500 }}>
                 <DataGrid
                     columns={columns}
                     rows={trainings}

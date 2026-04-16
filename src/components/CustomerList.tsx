@@ -105,7 +105,7 @@ function CustomerList() {
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Error when editing a car");
+                    throw new Error("Error when editing a customer");
                 }
                 return response.json();
             })
