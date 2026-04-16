@@ -17,7 +17,15 @@ function TrainingsList() {
     const [open, setOpen] = useState(false);
 
     const columns: GridColDef[] = [
-        { field: "customer", headerName: "Customer", width: 250 },
+        {
+            field: "customer",
+            headerName: "Customer",
+            width: 250,
+            renderCell: (params) => {
+                const c = params.row.customer;
+                return c ? `${c.firstname} ${c.lastname}` : "";
+            }
+        },
         {
             field: "date",
             headerName: "Date",
@@ -31,8 +39,8 @@ function TrainingsList() {
         { field: "duration", headerName: "Duration", width: 250 },
         { field: "activity", headerName: "Activity", width: 250 },
         {
-            field: "_links.customer.href",
-            headerName: "",
+            field: "edit",
+            headerName: "Edit",
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
@@ -41,13 +49,13 @@ function TrainingsList() {
             )
         },
         {
-            field: "_link.self.href",
-            headerName: "",
+            field: "delete",
+            headerName: "Delete",
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
             renderCell: (params: GridRenderCellParams) =>
-                <Button color="error" size="small" onClick={() => handleDelete(params.id as string)}>
+                <Button color="error" size="small" onClick={() => handleDelete(params.row.id)}>
                     Delete
                 </Button>
         }
@@ -62,39 +70,19 @@ function TrainingsList() {
     };
 
     const getTrainings = () => {
-        fetch(import.meta.env.VITE_API_URL + "/trainings")
+        fetch(import.meta.env.VITE_API_URL + "/gettrainings")
             .then(response => {
                 if (!response.ok)
                     throw new Error("Error when fetching trainings..")
                 return response.json();
             })
-            .then(data => {
-                const trainingsArray = data._embedded.trainings;
-
-                // tallennus taulukkoon ilman customer nimeä
-                setTrainings(trainingsArray);
-
-                // customer nimen haku foreach
-                trainingsArray.forEach((data: TrainingData, i: number) => {
-                    fetch(data._links.customer.href) // hakee asiakkaan etu- ja sukunimen
-                        .then(response => {
-                            if (!response.ok)
-                                throw new Error("Error when fetching names..")
-                            return response.json();
-                        })
-                        .then(customer => { // tallentaa nimen listaan
-                            data.customer = customer.firstname + " " + customer.lastname;
-                            setTrainings([...trainingsArray]);
-                        })
-                        .catch(err => console.log(err))
-                })
-            })
+            .then(data => setTrainings(data))
             .catch(err => console.log(err));
     }
 
-    const handleDelete = (url: string) => {
+    const handleDelete = (id: number) => {
         if (window.confirm("Delete Training?")) {
-            fetch(url, {
+            fetch(`${import.meta.env.VITE_API_URL}/trainings/${id}`, {
                 method: "DELETE"
             })
                 .then(response => {
@@ -110,19 +98,18 @@ function TrainingsList() {
         }
     }
 
-    const handleUpdate = (url: string, updatedTraining: Training) => {
-        const trainingData: TrainingPost = {
-            date: new Date(updatedTraining.date).toISOString(),
-            duration: updatedTraining.duration,
-            activity: updatedTraining.activity,
-            customer: updatedTraining.customer
-        };
-        fetch(url, {
+    const handleUpdate = (id: number, updatedTraining: TrainingPost) => {
+        fetch(`${import.meta.env.VITE_API_URL}/trainings/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(trainingData)
+            body: JSON.stringify({
+                date: new Date(updatedTraining.date).toISOString(),
+                duration: updatedTraining.duration,
+                activity: updatedTraining.activity,
+                customer: updatedTraining.customer
+            })
         })
             .then(response => {
                 if (!response.ok)
@@ -133,7 +120,7 @@ function TrainingsList() {
             .catch(err => console.error(err))
     }
 
-    const saveTraining = (training: Training) => {
+    const saveTraining = (training: TrainingPost) => {
         const trainingData: TrainingPost = {
             date: new Date(training.date).toISOString(),
             duration: training.duration,
@@ -176,7 +163,7 @@ function TrainingsList() {
                 <DataGrid
                     columns={columns}
                     rows={trainings}
-                    getRowId={row => row._links.self.href} //luo riville id:n links perusteella
+                    getRowId={row => row.id} //luo riville id:n links perusteella
                     autoPageSize
                     rowSelection={false}
                 />

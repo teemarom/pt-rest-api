@@ -5,7 +5,7 @@ import TrainingForm from "./TrainingForm";
 
 type EditTrainingProps = {
     training: TrainingData;
-    handleUpdate: (url: string, updatedTraining: Training) => void;
+    handleUpdate: (id: number, updatedTraining: Training) => void;
     customers: CustomerData[];
 }
 
@@ -35,7 +35,9 @@ export default function EditTraining(props: EditTrainingProps) {
     };
 
     const handleSubmit = () => {
-        props.handleUpdate(props.training._links.self.href, training);
+        if (props.training.id !== undefined) {
+            props.handleUpdate(props.training.id, training);
+        }
         handleClose();
     };
 

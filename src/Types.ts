@@ -22,6 +22,7 @@ export type CustomerData = {
 export type Customer = Omit<CustomerData, "_links">
 
 export type TrainingData = {
+    id?: number,
     date: string,
     duration: number,
     activity: string,
@@ -42,6 +43,7 @@ export type TrainingData = {
 export type Training = Omit<TrainingData, "_links">
 
 export type TrainingPost = {
+    id?: number;
     date:string;
     duration: number;
     activity: string;
