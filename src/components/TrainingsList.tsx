@@ -68,7 +68,9 @@ function TrainingsList() {
                     throw new Error("Error when fetching trainings..")
                 return response.json();
             })
-            .then(data => setTrainings(data))
+            .then(data => {
+                setTrainings(data);
+            })
             .catch(err => console.log(err))
     }
 
@@ -118,7 +120,7 @@ function TrainingsList() {
         }
     }
 
-    const handleUpdate = (id: number, updatedTraining: Training) => {
+   const handleUpdate = (id: number, updatedTraining: Training) => {
         fetch(`${import.meta.env.VITE_API_URL}/trainings/${id}`, {
             method: "PUT",
             headers: {
@@ -136,7 +138,9 @@ function TrainingsList() {
                     throw new Error("Error when updating a training");
                 return response.json();
             })
-            .then(() => getTrainings())
+            .then(data => {
+                getTrainings();
+            })
             .catch(err => console.error(err));
         }
 
