@@ -6,7 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { Button, Snackbar, Stack } from "@mui/material";
 import AddTraining from "./AddTraining";
-import EditTraining from "./EditTraining";
+
 
 
 function TrainingsList() {
@@ -38,16 +38,6 @@ function TrainingsList() {
         },
         { field: "duration", headerName: "Duration", width: 250 },
         { field: "activity", headerName: "Activity", width: 250 },
-        {
-            field: "edit",
-            headerName: "Edit",
-            sortable: false,
-            filterable: false,
-            disableColumnMenu: true,
-            renderCell: (params: GridRenderCellParams) =>
-                <EditTraining training={params.row} handleUpdate={handleUpdate} customers={customers} />
-
-        },
         {
             field: "delete",
             headerName: "",
@@ -119,30 +109,6 @@ function TrainingsList() {
                 .catch(err => console.error(err))
         }
     }
-
-   const handleUpdate = (id: number, updatedTraining: Training) => {
-        fetch(`${import.meta.env.VITE_API_URL}/trainings/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                date: new Date(updatedTraining.date).toISOString(),
-                duration: updatedTraining.duration,
-                activity: updatedTraining.activity,
-                customer: updatedTraining.customer
-            })
-        })
-            .then(response => {
-                if (!response.ok)
-                    throw new Error("Error when updating a training");
-                return response.json();
-            })
-            .then(data => {
-                getTrainings();
-            })
-            .catch(err => console.error(err));
-        }
 
         useEffect(() => {
             getTrainings();
