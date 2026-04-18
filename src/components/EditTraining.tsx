@@ -2,6 +2,7 @@ import { useState } from "react"
 import type { CustomerData, Training, TrainingData } from "../Types"
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import TrainingForm from "./TrainingForm";
+import dayjs from "dayjs";
 
 type EditTrainingProps = {
     training: TrainingData;
@@ -15,31 +16,33 @@ export default function EditTraining(props: EditTrainingProps) {
         date: "",
         duration: 0,
         activity: "",
-        customer: ""
+        customer: "",
     })
-    // muokkaa päivämäärän oikeaan muotoon
-    const formatDate = (date: string) => date.slice(0, 16);
+
+    const formatDate = (date: string) => {
+        return dayjs(date).format("YYYY-MM-DDTHH:mm");
+    }
 
     const handleClickOpen = () => {
         setTraining({
             date: formatDate(props.training.date),
             duration: props.training.duration,
             activity: props.training.activity,
-            customer: props.training.customer
-        });
-        setOpen(true);
+            customer: `${import.meta.env.VITE_API_URL}/customers/${props.training.customer.id}`
+        })
+        setOpen(true)
     };
 
     const handleClose = () => {
         setOpen(false);
-    };
+    }
 
     const handleSubmit = () => {
         if (props.training.id !== undefined) {
             props.handleUpdate(props.training.id, training);
         }
         handleClose();
-    };
+    }
 
     return (
         <>

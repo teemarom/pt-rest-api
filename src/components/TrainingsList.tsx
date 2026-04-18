@@ -1,4 +1,4 @@
-import type { CustomerData, Training, TrainingData, TrainingPost } from "../Types";
+import type { CustomerData, Training, TrainingData } from "../Types";
 import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
@@ -19,12 +19,12 @@ function TrainingsList() {
     const columns: GridColDef[] = [
         {
             field: "customer",
-            headerName: "Customer",
+            headerName: "Customer Name",
             width: 250,
-            renderCell: (params) => {
-                const c = params.row.customer;
-                return c ? `${c.firstname} ${c.lastname}` : "";
-            }
+            valueGetter: (value: any, row: any) => { // korjaa filtteröinnin nimen perusteella
+                const customer = row?.customer;
+                return customer ? `${customer.firstname} ${customer.lastname}` : "";
+            },
         },
         {
             field: "date",
@@ -44,13 +44,13 @@ function TrainingsList() {
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
-            renderCell: (params: GridRenderCellParams) => (
-                <EditTraining training={params.row as TrainingData} handleUpdate={handleUpdate} customers={customers} />
-            )
+            renderCell: (params: GridRenderCellParams) =>
+                <EditTraining training={params.row} handleUpdate={handleUpdate} customers={customers} />
+
         },
         {
             field: "delete",
-            headerName: "Delete",
+            headerName: "",
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
@@ -61,14 +61,6 @@ function TrainingsList() {
         }
     ]
 
-
-    const getCustomers = () => {
-        fetch(import.meta.env.VITE_API_URL + "/customers")
-            .then(res => res.json())
-            .then(data => setCustomers(data._embedded.customers))
-            .catch(err => console.log(err));
-    };
-
     const getTrainings = () => {
         fetch(import.meta.env.VITE_API_URL + "/gettrainings")
             .then(response => {
@@ -77,7 +69,35 @@ function TrainingsList() {
                 return response.json();
             })
             .then(data => setTrainings(data))
+            .catch(err => console.log(err))
+    }
+
+    const getCustomers = () => {
+        fetch(import.meta.env.VITE_API_URL + "/customers")
+            .then(res => res.json())
+            .then(data => setCustomers(data._embedded.customers))
             .catch(err => console.log(err));
+    };
+
+    const saveTraining = (training: Training) => {
+        return fetch(import.meta.env.VITE_API_URL + "/trainings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(training)
+        })
+            .then(response => {
+                if (!response.ok)
+                    throw new Error("Error when adding a new training..")
+                return response.json();
+            })
+    }
+
+    const handleAdd = (training: Training) => {
+        saveTraining(training)
+            .then(() => getTrainings())
+            .catch(err => console.log(err))
     }
 
     const handleDelete = (id: number) => {
@@ -87,7 +107,7 @@ function TrainingsList() {
             })
                 .then(response => {
                     if (!response.ok)
-                        throw new Error("Error when deleting a training");
+                        throw new Error("Error when deleting a training..");
                     return response.json();
                 })
                 .then(() => {
@@ -98,7 +118,7 @@ function TrainingsList() {
         }
     }
 
-    const handleUpdate = (id: number, updatedTraining: TrainingPost) => {
+    const handleUpdate = (id: number, updatedTraining: Training) => {
         fetch(`${import.meta.env.VITE_API_URL}/trainings/${id}`, {
             method: "PUT",
             headers: {
@@ -117,67 +137,39 @@ function TrainingsList() {
                 return response.json();
             })
             .then(() => getTrainings())
-            .catch(err => console.error(err))
-    }
+            .catch(err => console.error(err));
+        }
 
-    const saveTraining = (training: TrainingPost) => {
-        const trainingData: TrainingPost = {
-            date: new Date(training.date).toISOString(),
-            duration: training.duration,
-            activity: training.activity,
-            customer: training.customer
-        };
-        return fetch(import.meta.env.VITE_API_URL + "/trainings", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(trainingData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    console.log(training);
-                    throw new Error("Error when adding a new training");
-                }
-                return response.json();
-            })
-    }
+        useEffect(() => {
+            getTrainings();
+            getCustomers();
+        }, []);
 
-    const handleAdd = (training: Training) => {
-        saveTraining(training)
-            .then(() => getTrainings())
-            .catch(err => console.log(err))
-    }
-
-    useEffect(() => {
-        getTrainings();
-        getCustomers();
-    }, []);
-
-    return (
-        <>
-            <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
-                <AddTraining handleAdd={handleAdd} customers={customers} />
-            </Stack>
-            <div style={{ width: "100%", height: 500 }}>
-                <DataGrid
-                    columns={columns}
-                    rows={trainings}
-                    getRowId={row => row.id} //luo riville id:n links perusteella
-                    autoPageSize
-                    rowSelection={false}
+        return (
+            <>
+                <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
+                    <AddTraining handleAdd={handleAdd} customers={customers} />
+                </Stack>
+                <div style={{ width: "100%", height: 500 }}>
+                    <DataGrid
+                        key={trainings.length + trainings.map(t => t.id).join()}
+                        columns={columns}
+                        rows={trainings}
+                        getRowId={row => row.id} //luo riville id:n links perusteella
+                        autoPageSize
+                        rowSelection={false}
+                    />
+                </div>
+                <Snackbar
+                    open={open}
+                    autoHideDuration={4000}
+                    onClose={() => setOpen(false)}
+                    message="Training Deleted"
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
                 />
-            </div>
-            <Snackbar
-                open={open}
-                autoHideDuration={4000}
-                onClose={() => setOpen(false)}
-                message="Training Deleted"
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            />
-        </>
-    )
-
+            </>
+        )
+    
 }
 
 export default TrainingsList;
