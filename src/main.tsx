@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import Home from './components/Home.tsx'
 import CustomerList from './components/CustomerList.tsx'
 import TrainingsList from './components/TrainingsList.tsx'
+import DefaultView from './components/EventCalendar.tsx'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "trainingslist",
         element: <TrainingsList />
+      },
+      {
+        path: "eventcalendar",
+        element: <DefaultView />
       }
     ]
   },

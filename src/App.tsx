@@ -19,9 +19,10 @@ function App() {
         </AppBar>
 
         <nav  style={{ marginTop: "16px", marginBottom: "16px" }}>
-          <Link to={"/"}>Home </Link><br/>
-          <Link to={"/customerlist"}>Customer List </Link><br/>
+          <Link to={"/"}>Home </Link>
+          <Link to={"/customerlist"}>Customer List </Link>
           <Link to={"/trainingslist"}>Trainings List </Link>
+          <Link to={"/eventcalendar"}>Event Calendar</Link>
         </nav>
         <Outlet />
 

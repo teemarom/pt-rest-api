@@ -21,7 +21,7 @@ function TrainingsList() {
             field: "customer",
             headerName: "Customer Name",
             width: 250,
-            valueGetter: (value: any, row: any) => { // korjaa filtteröinnin nimen perusteella
+            valueGetter: (_value: any, row: any) => { // korjaa filtteröinnin nimen perusteella
                 const customer = row?.customer;
                 return customer ? `${customer.firstname} ${customer.lastname}` : "";
             },
