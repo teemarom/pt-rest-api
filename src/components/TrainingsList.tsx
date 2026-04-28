@@ -6,7 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import { Button, Snackbar, Stack } from "@mui/material";
 import AddTraining from "./AddTraining";
-
+import { fetchTrainings, saveTraining, fetchCustomers } from "../ptapi";
 
 
 function TrainingsList() {
@@ -52,12 +52,7 @@ function TrainingsList() {
     ]
 
     const getTrainings = () => {
-        fetch(import.meta.env.VITE_API_URL + "/gettrainings")
-            .then(response => {
-                if (!response.ok)
-                    throw new Error("Error when fetching trainings..")
-                return response.json();
-            })
+        fetchTrainings()
             .then(data => {
                 setTrainings(data);
             })
@@ -65,26 +60,12 @@ function TrainingsList() {
     }
 
     const getCustomers = () => {
-        fetch(import.meta.env.VITE_API_URL + "/customers")
-            .then(res => res.json())
+        fetchCustomers()
             .then(data => setCustomers(data._embedded.customers))
             .catch(err => console.log(err));
     };
 
-    const saveTraining = (training: Training) => {
-        return fetch(import.meta.env.VITE_API_URL + "/trainings", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(training)
-        })
-            .then(response => {
-                if (!response.ok)
-                    throw new Error("Error when adding a new training..")
-                return response.json();
-            })
-    }
+
 
     const handleAdd = (training: Training) => {
         saveTraining(training)

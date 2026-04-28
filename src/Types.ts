@@ -21,23 +21,13 @@ export type CustomerData = {
 
 export type Customer = Omit<CustomerData, "_links">
 
-export type CustomerInfo = {
-    id: number;
-    firstname: string;
-    lastname: string;
-    streetaddress: string;
-    postcode: string;
-    city: string;
-    email:string;
-    phone: string;
-}
 
 export type TrainingData = {
     id: number,
     date: string,
     duration: number,
     activity: string,
-    customer: CustomerInfo,
+    customer: Customer,
     _links: {
         self: {
             href: string

@@ -6,6 +6,7 @@ import { Button, Stack } from "@mui/material";
 import AddCustomer from "./AddCustomer";
 import EditCustomer from "./EditCustomer";
 import Snackbar from '@mui/material/Snackbar';
+import { fetchCustomers, saveCustomer } from "../ptapi";
 
 
 
@@ -46,12 +47,7 @@ function CustomerList() {
     ]
 
     const getCustomers = () => {
-        fetch(import.meta.env.VITE_API_URL + "/customers")
-            .then(response => {
-                if (!response.ok)
-                    throw new Error("Error when fetching customers..")
-                return response.json();
-            })
+        fetchCustomers()
             .then(data => setCustomers(data._embedded.customers))
             .catch(err => console.log(err));
     }
@@ -72,21 +68,6 @@ function CustomerList() {
                 })
                 .catch(err => console.error(err))
         }
-    }
-
-    const saveCustomer = (customer: Customer) => {
-        return fetch(import.meta.env.VITE_API_URL + "/customers", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body:JSON.stringify(customer)
-        })
-            .then(response => {
-                if (!response.ok)
-                    throw new Error("Error when adding a new customer");
-                return response.json();
-            })
     }
 
     const handleAdd = (customer: Customer) => {

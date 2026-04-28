@@ -20,9 +20,9 @@ export default function DefaultView() {
             .then(data => {
                 const formattedEvents: SchedulerEvent[] = data.map((training: any) => ({
                     id: training.id, 
-                    title: `${training.activity} / ${training.customer.firstname} ${training.customer.lastname}`,
+                    title: `${training.activity} / ${training.customer.firstname} ${training.customer.lastname}`, // aktiviteetti & etunimi + sukunimi
                     start: new Date(training.date).toISOString(),
-                    end: new Date(new Date(training.date).getTime() + training.duration * 60000).toISOString(), // lisää duration*millisekuntit durationin start aikaan jotta oikea end aika oikein
+                    end: new Date(new Date(training.date).getTime() + training.duration * 60000).toISOString(), // lisää duration*millisekuntit start aikaan jotta endtime oikein
                 }));
                 setEvents(formattedEvents);
             })
