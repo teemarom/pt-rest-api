@@ -9,8 +9,6 @@ import Snackbar from '@mui/material/Snackbar';
 import { fetchCustomers, saveCustomer } from "../ptapi";
 
 
-
-
 function CustomerList() {
 
     const [customers, setCustomers] = useState<CustomerData[]>([]);
@@ -115,7 +113,7 @@ function CustomerList() {
                     showToolbar
                     slotProps={{
                         toolbar: {
-                            printOptions: { disableToolbarButton: true },
+                            printOptions: { disableToolbarButton: true }, // poistaa print vaihtoehdon
                         },
                     }}
                 />

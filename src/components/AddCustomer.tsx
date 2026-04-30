@@ -3,6 +3,7 @@ import type { Customer } from "../Types";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import CustomerForm from "./CustomerForm";
 
+
 type AddCustomerProps = {
     handleAdd: (customer: Customer) => void;
 }

@@ -6,9 +6,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Link, Outlet } from 'react-router';
 
+
 function App() {
   
-
   return (
     <>
       <Container maxWidth="xl">

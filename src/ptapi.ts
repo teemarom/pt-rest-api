@@ -26,9 +26,6 @@ export const saveCustomer = (customer: Customer) => {
         })
 }
 
-
-
-
 // TRAININGS
 export const fetchTrainings = () => {
     return fetch(import.meta.env.VITE_API_URL + "/gettrainings")

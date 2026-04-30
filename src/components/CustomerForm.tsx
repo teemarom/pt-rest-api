@@ -2,6 +2,7 @@ import  DialogContent  from "@mui/material/DialogContent"
 import TextField from "@mui/material/TextField"
 import type { Customer } from "../Types";
 
+
 type CustomerFormType = {
     customer: Customer;
     setCustomer: React.Dispatch<React.SetStateAction<Customer>>;

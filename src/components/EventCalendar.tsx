@@ -7,11 +7,8 @@ dayjs.extend(utc);
 import { fetchTrainings } from '../ptapi';
 
 
-
 export default function DefaultView() {
     const [events, setEvents] = React.useState<SchedulerEvent[]>([]);
-
-
 
     React.useEffect(() => {
         fetchTrainings()
@@ -30,7 +27,6 @@ export default function DefaultView() {
             })
             .catch(err => console.error(err));
     }, []);
-
 
     return (
         <div style={{ height: '650px', width: '100%' }}>

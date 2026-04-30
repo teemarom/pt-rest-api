@@ -2,13 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { createBrowserRouter, RouterProvider } from 'react-router'
+import { createHashRouter, RouterProvider } from 'react-router'
 import Home from './components/Home.tsx'
 import CustomerList from './components/CustomerList.tsx'
 import TrainingsList from './components/TrainingsList.tsx'
 import DefaultView from './components/EventCalendar.tsx'
 
-const router = createBrowserRouter([
+
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,

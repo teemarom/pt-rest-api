@@ -2,11 +2,9 @@ import type { CustomerData, Training, TrainingData } from "../Types";
 import { useEffect, useState } from "react";
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
-
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
-
 import { Button, Snackbar, Stack } from "@mui/material";
 import AddTraining from "./AddTraining";
 import { fetchTrainings, saveTraining, fetchCustomers } from "../ptapi";
@@ -16,7 +14,6 @@ function TrainingsList() {
 
     const [trainings, setTrainings] = useState<TrainingData[]>([]);
     const [customers, setCustomers] = useState<CustomerData[]>([]);
-
     const [open, setOpen] = useState(false);
 
     const columns: GridColDef[] = [
@@ -69,8 +66,6 @@ function TrainingsList() {
             .catch(err => console.log(err));
     };
 
-
-
     const handleAdd = (training: Training) => {
         saveTraining(training)
             .then(() => getTrainings())
@@ -95,42 +90,42 @@ function TrainingsList() {
         }
     }
 
-        useEffect(() => {
-            getTrainings();
-            getCustomers();
-        }, []);
+    useEffect(() => {
+        getTrainings();
+        getCustomers();
+    }, []);
 
-        return (
-            <>
-                <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
-                    <AddTraining handleAdd={handleAdd} customers={customers} />
-                </Stack>
-                <div style={{ width: "100%", height: 500 }}>
-                    <DataGrid
-                        key={trainings.length + trainings.map(t => t.id).join()}
-                        columns={columns}
-                        rows={trainings}
-                        getRowId={row => row.id} //luo riville id:n links perusteella
-                        autoPageSize
-                        rowSelection={false}
-                        showToolbar
-                        slotProps={{
-                            toolbar: {
-                                printOptions: { disableToolbarButton: true },
-                            },
-                        }}
-                    />
-                </div>
-                <Snackbar
-                    open={open}
-                    autoHideDuration={4000}
-                    onClose={() => setOpen(false)}
-                    message="Training Deleted"
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+    return (
+        <>
+            <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
+                <AddTraining handleAdd={handleAdd} customers={customers} />
+            </Stack>
+            <div style={{ width: "100%", height: 500 }}>
+                <DataGrid
+                    key={trainings.length + trainings.map(t => t.id).join()}
+                    columns={columns}
+                    rows={trainings}
+                    getRowId={row => row.id} //luo riville id:n links perusteella
+                    autoPageSize
+                    rowSelection={false}
+                    showToolbar
+                    slotProps={{
+                        toolbar: {
+                            printOptions: { disableToolbarButton: true }, // poistaa print vaihtoehdon
+                        },
+                    }}
                 />
-            </>
-        )
-    
+            </div>
+            <Snackbar
+                open={open}
+                autoHideDuration={4000}
+                onClose={() => setOpen(false)}
+                message="Training Deleted"
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            />
+        </>
+    )
+
 }
 
 export default TrainingsList;

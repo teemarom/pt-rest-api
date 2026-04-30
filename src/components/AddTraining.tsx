@@ -3,6 +3,7 @@ import type { CustomerData, Training } from "../Types";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import TrainingForm from "./TrainingForm";
 
+
 type AddTrainingProps = {
     handleAdd: (training: Training) => void;
     customers: CustomerData[];

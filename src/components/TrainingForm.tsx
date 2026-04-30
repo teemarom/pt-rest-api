@@ -1,6 +1,7 @@
 import { DialogContent, MenuItem, TextField } from "@mui/material";
 import type { CustomerData, Training } from "../Types";
 
+
 type TrainingFormType = {
     training: Training;
     setTraining: React.Dispatch<React.SetStateAction<Training>>;

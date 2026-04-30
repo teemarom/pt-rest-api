@@ -3,6 +3,7 @@ import type { Customer, CustomerData } from "../Types";
 import CustomerForm from "./CustomerForm";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 
+
 type EditCustomerProps = {
     customer: CustomerData;
     handleUpdate: (url: string, updatedCustomer: Customer) => void;
