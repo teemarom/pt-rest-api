@@ -4,6 +4,9 @@ import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { DataGrid } from "@mui/x-data-grid";
 
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
+
 import { Button, Snackbar, Stack } from "@mui/material";
 import AddTraining from "./AddTraining";
 import { fetchTrainings, saveTraining, fetchCustomers } from "../ptapi";
@@ -33,7 +36,7 @@ function TrainingsList() {
             renderCell: (params: GridRenderCellParams) => {
                 const value = params.row.date;
 
-                return dayjs(value).format("DD.MM.YYYY HH:mm");
+                return dayjs.utc(value).format("DD.MM.YYYY HH:mm");
             }
         },
         { field: "duration", headerName: "Duration", width: 250 },
