@@ -17,19 +17,20 @@ function CustomerList() {
     const [open, setOpen] = useState(false);
 
     const columns: GridColDef[] = [
-        { field: "firstname", headerName: "First Name", width:150 },
-        { field: "lastname", headerName: "Last Name", width:150 },
-        { field: "email", headerName: "Email", width:250 },
-        { field: "phone", headerName: "Phone", width:150 },
-        { field: "streetaddress", headerName: "Address",width:200 },
-        { field: "postcode", headerName: "Postcode", width:100 },
-        { field: "city", headerName: "City", width:100 },
+        { field: "firstname", headerName: "First Name", width: 150 },
+        { field: "lastname", headerName: "Last Name", width: 150 },
+        { field: "email", headerName: "Email", width: 250 },
+        { field: "phone", headerName: "Phone", width: 150 },
+        { field: "streetaddress", headerName: "Address", width: 200 },
+        { field: "postcode", headerName: "Postcode", width: 100 },
+        { field: "city", headerName: "City", width: 100 },
         {
             field: "_links.customer.href",
             headerName: "",
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
+            disableExport: true,
             renderCell: (params: GridRenderCellParams) =>
                 <EditCustomer customer={params.row} handleUpdate={handleUpdate} />
         },
@@ -39,6 +40,7 @@ function CustomerList() {
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
+            disableExport: true,
             renderCell: (params: GridRenderCellParams) =>
                 <Button color="error" size="small" onClick={() => handleDelete(params.id as string)}>
                     Delete
@@ -52,7 +54,7 @@ function CustomerList() {
             .catch(err => console.log(err));
     }
 
-    const handleDelete =(url: string) => {
+    const handleDelete = (url: string) => {
         if (window.confirm("Delete Customer?")) {
             fetch(url, {
                 method: "DELETE"
@@ -100,7 +102,7 @@ function CustomerList() {
 
     return (
         <>
-            <Stack sx={{mt:2, mb:2}} direction="row" margin="auto">
+            <Stack sx={{ mt: 2, mb: 2 }} direction="row" margin="auto">
                 <AddCustomer handleAdd={handleAdd} />
             </Stack>
             <div style={{ width: "100%", height: 500 }}>
@@ -110,9 +112,15 @@ function CustomerList() {
                     getRowId={row => row._links.self.href} //luo riville id:n links perusteella
                     autoPageSize
                     rowSelection={false}
+                    showToolbar
+                    slotProps={{
+                        toolbar: {
+                            printOptions: { disableToolbarButton: true },
+                        },
+                    }}
                 />
             </div>
-            <Snackbar 
+            <Snackbar
                 open={open}
                 autoHideDuration={4000}
                 onClose={() => setOpen(false)}

@@ -44,6 +44,7 @@ function TrainingsList() {
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
+            disableExport: true,
             renderCell: (params: GridRenderCellParams) =>
                 <Button color="error" size="small" onClick={() => handleDelete(params.row.id)}>
                     Delete
@@ -109,6 +110,12 @@ function TrainingsList() {
                         getRowId={row => row.id} //luo riville id:n links perusteella
                         autoPageSize
                         rowSelection={false}
+                        showToolbar
+                        slotProps={{
+                            toolbar: {
+                                printOptions: { disableToolbarButton: true },
+                            },
+                        }}
                     />
                 </div>
                 <Snackbar
